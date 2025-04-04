@@ -108,3 +108,26 @@ def test_create_question_with_invalid_points():
         Question(title='q1', points=0)
     with pytest.raises(Exception):
         Question(title='q1', points=101)
+
+@pytest.fixture
+def question_with_choices():
+    """Fixture que cria uma questão com múltiplas escolhas."""
+    question = Question(title='Sample Question', max_selections=2)
+    question.add_choice('Choice 1', False)
+    question.add_choice('Choice 2', True)
+    question.add_choice('Choice 3', True)
+    return question
+
+
+def test_select_correct_choices_with_fixture(question_with_choices):
+    """Testa a seleção de escolhas corretas usando a fixture."""
+    selected = question_with_choices.select_choices([question_with_choices.choices[1].id, question_with_choices.choices[2].id])
+    assert selected == [question_with_choices.choices[1].id, question_with_choices.choices[2].id]
+
+
+def test_remove_choice_with_fixture(question_with_choices):
+    """Testa a remoção de uma escolha específica usando a fixture."""
+    choice_to_remove = question_with_choices.choices[0]
+    question_with_choices.remove_choice_by_id(choice_to_remove.id)
+    assert len(question_with_choices.choices) == 2
+    assert choice_to_remove not in question_with_choices.choices
